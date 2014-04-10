@@ -1,0 +1,12 @@
+*.db
+*.elc
+*.pyc
+*.pyo
+*~
+.#*
+.dir-locals.el
+__pycache__
+build/
+dist/
+mailman2twitter.egg-info/
+setuptools-*
