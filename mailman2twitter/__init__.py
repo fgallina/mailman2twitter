@@ -287,7 +287,7 @@ def get_message_data(link, archive_url):
         A 3 element tuple where the first element is the message id, the
         second the subject and the last one the message URL
     """
-    subject = (link.text.strip()
+    subject = (link.encode_contents().strip()
                # I got several occurrences of places where spaces where
                # replaced with tabs on subjects for replies to OP, we handle
                # this here.
