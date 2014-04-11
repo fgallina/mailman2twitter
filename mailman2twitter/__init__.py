@@ -35,19 +35,19 @@ parser = ConfigParser()
 
 parser.add_section('mailman2twitter')
 parser.set('mailman2twitter', 'backoff', '4')
-parser.set('mailman2twitter', 'base_url')
+parser.set('mailman2twitter', 'base_url', '')
 parser.set('mailman2twitter', 'db', '~/mailman2twitter.sqlite')
 parser.set('mailman2twitter', 'max_tries', '3')
 parser.set('mailman2twitter', 'testing', 'false')
 
 parser.add_section('twitter')
-parser.set('twitter', 'consumer_key')
-parser.set('twitter', 'consumer_secret')
-parser.set('twitter', 'access_token_key')
-parser.set('twitter', 'access_token_secret')
+parser.set('twitter', 'consumer_key', '')
+parser.set('twitter', 'consumer_secret', '')
+parser.set('twitter', 'access_token_key', '')
+parser.set('twitter', 'access_token_secret', '')
 
 parser.add_section('owly')
-parser.set('owly', 'api_key')
+parser.set('owly', 'api_key', '')
 
 
 class MaxTriesReachedError(Exception):
