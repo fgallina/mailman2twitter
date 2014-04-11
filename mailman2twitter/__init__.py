@@ -198,7 +198,7 @@ def shorten_url(config, url):
     if not code == 200:
         raise IOError("Owly replied with code: %s" % code)
     data = response.json()
-    return data['results']['shortUrl']
+    return data['results']['shortUrl'].encode('utf-8')
 
 
 def push_twitter(config, message):
