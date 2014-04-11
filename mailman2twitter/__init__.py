@@ -253,7 +253,7 @@ def exec_with_backoff(fn, config, *args, **kwargs):
         try:
             return fn(config, *args, **kwargs)
         except Exception:
-            logger.warn('Failed! Waiting for %s seconds' % backoff)
+            logger.exception("Push failed, waiting for %s seconds" % backoff)
             time.sleep(backoff)
             backoff **= 2
     else:
