@@ -233,6 +233,20 @@ def push_twitter(config, message):
         logger.debug("Not sending to twitter (testing mode): %s" % message_id)
 
 
+def is_duplicate_error(exception):
+    """
+    Returns True if exception is instance of TwitterError and is a duplicate
+    status error.
+    """
+    if isinstance(exception, twitter.TwitterError):
+        try:
+            data = exception.args[0][0]
+            return data['message'] == u'Status is a duplicate.'
+        except (AttributeError, IndexError, KeyError, TypeError):
+            pass
+    return False
+
+
 def exec_with_backoff(fn, config, *args, **kwargs):
     """
     Executes fn with exponential backoff.
@@ -252,12 +266,14 @@ def exec_with_backoff(fn, config, *args, **kwargs):
     for _ in range(max_tries):
         try:
             return fn(config, *args, **kwargs)
-        except Exception:
+        except Exception as exception:
             logger.exception("Push failed, waiting for %s seconds" % backoff)
             time.sleep(backoff)
             backoff **= 2
     else:
-        raise MaxTriesReachedError('Stop trying to task after: %s' % backoff)
+        error = MaxTriesReachedError('Stop trying to task after: %s' % backoff)
+        error.args += (exception,)
+        raise error
 
 
 def normalize_base_url(base_url):
@@ -353,8 +369,11 @@ def push_threads(config):
         try:
             exec_with_backoff(push_twitter, config, message)
             sent_subjects.add(subject)
-        except MaxTriesReachedError:
-            pass
+        except MaxTriesReachedError as error:
+            _, exception = error.args
+            if is_duplicate_error(exception):
+                logger.info('Marking message as sent (reason: duplicate).')
+                sent_subjects.add(subject)
     update_db(config, sent_subjects)
 
 
